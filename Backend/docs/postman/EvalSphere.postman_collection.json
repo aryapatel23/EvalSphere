@@ -1,0 +1,1341 @@
+{
+  "info": {
+    "_postman_id": "73920d57-8137-4f18-b8a0-d22df8f7dbdc",
+    "name": "EvalSphere API Collection",
+    "description": "Professional Postman collection for all EvalSphere APIs in a single import file.\n\nHow to use:\n1) Import only this collection file\n2) Use collection variables (already included)\n3) Run login APIs first to auto-fill role-based tokens\n\nAuth token variables:\n- jwtToken (super admin/general)\n- organizerToken\n- companyToken\n- judgeToken\n- participantToken\n\nSeeded login accounts (password: Pass@123):\n- superadmin@evalsphere.com\n- organizer@evalsphere.com\n- company@evalsphere.com\n- judge1@evalsphere.com\n- p1@evalsphere.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth & Sessions",
+      "item": [
+        {
+          "name": "Register Participant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Participant New\",\n  \"email\": \"participant.new@evalsphere.com\",\n  \"password\": \"Pass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "description": "Create a new participant account. Public endpoint. Returns a success response with account details."
+        },
+        {
+          "name": "Login as Super Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j=pm.response.json(); if (j?.data?.token) pm.collectionVariables.set('jwtToken', j.data.token); if (j?.data?.refreshToken) pm.collectionVariables.set('refreshToken', j.data.refreshToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"superadmin@evalsphere.com\",\n  \"password\": \"Pass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "description": "Authenticate seeded super admin user and store access/refresh tokens into collection variables."
+        },
+        {
+          "name": "Login as Organizer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j=pm.response.json(); if (j?.data?.token) pm.collectionVariables.set('organizerToken', j.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"organizer@evalsphere.com\",\n  \"password\": \"Pass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "description": "Authenticate organizer user and store organizer token into collection variable organizerToken."
+        },
+        {
+          "name": "Login as Company",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j=pm.response.json(); if (j?.data?.token) pm.collectionVariables.set('companyToken', j.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"company@evalsphere.com\",\n  \"password\": \"Pass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "description": "Authenticate company user and store company token into collection variable companyToken."
+        },
+        {
+          "name": "Login as Judge",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j=pm.response.json(); if (j?.data?.token) pm.collectionVariables.set('judgeToken', j.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"judge1@evalsphere.com\",\n  \"password\": \"Pass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "description": "Authenticate judge user and store judge token into collection variable judgeToken."
+        },
+        {
+          "name": "Login as Participant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j=pm.response.json(); if (j?.data?.token) pm.collectionVariables.set('participantToken', j.data.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"p1@evalsphere.com\",\n  \"password\": \"Pass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "description": "Authenticate participant user and store participant token into collection variable participantToken."
+        },
+        {
+          "name": "Refresh Access Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "description": "Exchange a valid refresh token for a new access token. Use refreshToken collection variable."
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "description": "Invalidate refresh token for current session logout."
+        }
+      ],
+      "description": "Authentication and session lifecycle endpoints. Start here to obtain access tokens for role-based API testing."
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User (SUPER_ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Global Judge\",\n  \"email\": \"globaljudge@evalsphere.com\",\n  \"password\": \"Pass@123\",\n  \"role\": \"JUDGE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "description": "Create a user with a specific role. Requires super admin token in Authorization header."
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "description": "Fetch profile of currently authenticated user."
+        }
+      ],
+      "description": "User management and profile APIs. Includes privileged user creation and self profile access."
+    },
+    {
+      "name": "Hackathon Legacy Engine",
+      "item": [
+        {
+          "name": "Create Hackathon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organizerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Global Hackathon\",\n  \"description\": \"Global build challenge\",\n  \"rules\": \"Complete your submissions before deadline\",\n  \"startDate\": \"2026-06-01T00:00:00.000Z\",\n  \"endDate\": \"2026-07-01T00:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hackathon",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hackathon"
+              ]
+            }
+          },
+          "description": "Create a hackathon event. Requires organizer authorization."
+        },
+        {
+          "name": "List Hackathons",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hackathon",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hackathon"
+              ]
+            }
+          },
+          "description": "List available hackathons visible to authenticated users."
+        },
+        {
+          "name": "Assign Judges",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organizerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"judgeIds\": [4, 5]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hackathon/{{hackathonId}}/judges",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hackathon",
+                "{{hackathonId}}",
+                "judges"
+              ]
+            }
+          },
+          "description": "Assign judge users to a hackathon by hackathonId. Requires organizer authorization."
+        }
+      ],
+      "description": "Legacy hackathon workflow APIs including creation, listing, and judge assignment."
+    },
+    {
+      "name": "Team & Submission",
+      "item": [
+        {
+          "name": "Create Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{participantToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Global Builders\",\n  \"hackathonId\": {{hackathonId}},\n  \"memberIds\": [7]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/team",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "team"
+              ]
+            }
+          },
+          "description": "Create a participant team under a hackathon. Requires participant authorization."
+        },
+        {
+          "name": "Join Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{participantToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/team/{{teamId}}/join",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "team",
+                "{{teamId}}",
+                "join"
+              ]
+            }
+          },
+          "description": "Join existing team by teamId using participant authorization."
+        },
+        {
+          "name": "List Teams",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/team?hackathonId={{hackathonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "team"
+              ],
+              "query": [
+                {
+                  "key": "hackathonId",
+                  "value": "{{hackathonId}}"
+                }
+              ]
+            }
+          },
+          "description": "List teams for a hackathonId."
+        },
+        {
+          "name": "Submit Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{participantToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"teamId\": {{teamId}},\n  \"title\": \"Transparent Scoring Suite\",\n  \"description\": \"Scoring + explainability platform\",\n  \"githubLink\": \"https://github.com/example/transparent-suite\",\n  \"demoLink\": \"https://demo.example.com/transparent-suite\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/project",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "project"
+              ]
+            }
+          },
+          "description": "Submit a team project with repository and demo links. Requires participant authorization."
+        },
+        {
+          "name": "List Projects",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/project?hackathonId={{hackathonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "project"
+              ],
+              "query": [
+                {
+                  "key": "hackathonId",
+                  "value": "{{hackathonId}}"
+                }
+              ]
+            }
+          },
+          "description": "List submitted projects for a hackathonId."
+        }
+      ],
+      "description": "Team collaboration and project submission endpoints for participants."
+    },
+    {
+      "name": "Evaluation & Transparency",
+      "item": [
+        {
+          "name": "Submit Score",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{judgeToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"projectId\": {{projectId}},\n  \"innovation\": 9,\n  \"uiux\": 8,\n  \"impact\": 8,\n  \"feasibility\": 9,\n  \"comment\": \"Strong architecture and implementation quality.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/score",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "score"
+              ]
+            }
+          },
+          "description": "Judge scoring endpoint for a project across weighted dimensions. Requires judge authorization."
+        },
+        {
+          "name": "Get Project Scores",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/score/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "score",
+                "{{projectId}}"
+              ]
+            }
+          },
+          "description": "Retrieve score entries for a project."
+        },
+        {
+          "name": "Transparency Report",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/transparency/{{projectId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "transparency",
+                "{{projectId}}"
+              ]
+            }
+          },
+          "description": "Get transparency report for a project including scoring rationale."
+        },
+        {
+          "name": "Leaderboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/leaderboard/{{hackathonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "leaderboard",
+                "{{hackathonId}}"
+              ]
+            }
+          },
+          "description": "Get ranked leaderboard results for a hackathonId."
+        },
+        {
+          "name": "Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organizerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/analytics/{{hackathonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "analytics",
+                "{{hackathonId}}"
+              ]
+            }
+          },
+          "description": "Get hackathon analytics metrics. Requires organizer authorization."
+        }
+      ],
+      "description": "Scoring, transparency, leaderboard, and analytics APIs for result visibility."
+    },
+    {
+      "name": "Hiring & Talent",
+      "item": [
+        {
+          "name": "Create Hiring Interest",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organizerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companyName\": \"TalentBridge\",\n  \"projectId\": {{projectId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hiring/interest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hiring",
+                "interest"
+              ]
+            }
+          },
+          "description": "Create hiring interest record for a project. Requires organizer authorization."
+        },
+        {
+          "name": "Top Teams for Hiring",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organizerToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hiring/top-teams/{{hackathonId}}?limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hiring",
+                "top-teams",
+                "{{hackathonId}}"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "description": "Return top teams suitable for hiring for a hackathon."
+        },
+        {
+          "name": "Shortlist Candidate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{companyToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"candidateId\": 6,\n  \"projectId\": {{projectId}},\n  \"notes\": \"High potential for backend role\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/hiring/shortlist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hiring",
+                "shortlist"
+              ]
+            }
+          },
+          "description": "Company shortlists a participant candidate for a project. Requires company authorization."
+        },
+        {
+          "name": "Get My Shortlisted Candidates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{companyToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/hiring/shortlist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "hiring",
+                "shortlist"
+              ]
+            }
+          },
+          "description": "List shortlisted candidates for authenticated company user."
+        }
+      ],
+      "description": "Hiring interest, talent shortlisting, and top-team discovery endpoints."
+    },
+    {
+      "name": "Competition Engine V2",
+      "item": [
+        {
+          "name": "Create Competition",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organizerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Global Hiring Challenge\",\n  \"description\": \"Case-study + prototype + hiring pipeline\",\n  \"type\": \"HIRING_CHALLENGE\",\n  \"visibility\": \"PUBLIC\",\n  \"status\": \"ACTIVE\",\n  \"rules\": \"Transparent scoring with mandatory comments\",\n  \"maxTeamSize\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions"
+              ]
+            }
+          },
+          "description": "Create a V2 competition with type, visibility, rules, and limits. Requires organizer authorization."
+        },
+        {
+          "name": "List Competitions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions?status=ACTIVE&type=HIRING_CHALLENGE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVE"
+                },
+                {
+                  "key": "type",
+                  "value": "HIRING_CHALLENGE"
+                }
+              ]
+            }
+          },
+          "description": "List competitions with optional status/type filters."
+        },
+        {
+          "name": "Get Competition by Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/{{competitionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "{{competitionId}}"
+              ]
+            }
+          },
+          "description": "Fetch a single competition by competitionId."
+        },
+        {
+          "name": "Register for Competition",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{participantToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/{{competitionId}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "{{competitionId}}",
+                "register"
+              ]
+            }
+          },
+          "description": "Register authenticated participant for a competition."
+        },
+        {
+          "name": "Add Competition Criterion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{organizerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"key\": \"problem_solving\",\n  \"name\": \"Problem Solving\",\n  \"description\": \"How effectively the problem is solved\",\n  \"weight\": 0.15,\n  \"maxScore\": 10\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/competitions/{{competitionId}}/criteria",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "competitions",
+                "{{competitionId}}",
+                "criteria"
+              ]
+            }
+          },
+          "description": "Add scoring criterion to a competition. Requires organizer authorization."
+        }
+      ],
+      "description": "Modern competition APIs for competition creation, registration, and criteria setup."
+    },
+    {
+      "name": "Jobs & Applications V2",
+      "item": [
+        {
+          "name": "Create Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{companyToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Backend Engineer\",\n  \"description\": \"Build global scale APIs\",\n  \"requirements\": \"Node.js, PostgreSQL, distributed systems\",\n  \"type\": \"FULL_TIME\",\n  \"salaryOrStipend\": \"$20k-$35k\",\n  \"location\": \"Remote\",\n  \"competitionId\": {{competitionId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ]
+            }
+          },
+          "description": "Create a job posting linked to competition context. Requires company authorization."
+        },
+        {
+          "name": "List Jobs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs?isActive=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs"
+              ],
+              "query": [
+                {
+                  "key": "isActive",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "description": "List active jobs for discovery."
+        },
+        {
+          "name": "Apply to Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{participantToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resumeUrl\": \"https://cdn.example.com/resumes/p1.pdf\",\n  \"coverLetter\": \"I am excited to contribute to global competition infrastructure.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/apply",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "apply"
+              ]
+            }
+          },
+          "description": "Submit participant application for a job with resume and cover letter."
+        },
+        {
+          "name": "List Applications for Job",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{companyToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/applications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "applications"
+              ]
+            }
+          },
+          "description": "Company lists all applications for a specific job."
+        },
+        {
+          "name": "Update Application Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{companyToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"SHORTLISTED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/jobs/{{jobId}}/applications/{{applicationId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "jobs",
+                "{{jobId}}",
+                "applications",
+                "{{applicationId}}"
+              ]
+            }
+          },
+          "description": "Company updates candidate application status (for example: SHORTLISTED)."
+        }
+      ],
+      "description": "Job posting and application pipeline APIs for companies and participants."
+    },
+    {
+      "name": "Notifications & Admin",
+      "item": [
+        {
+          "name": "My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "me"
+              ]
+            }
+          },
+          "description": "Get notifications for currently authenticated user."
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications/{{notificationId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "notifications",
+                "{{notificationId}}",
+                "read"
+              ]
+            }
+          },
+          "description": "Mark one notification as read by notificationId."
+        },
+        {
+          "name": "Governance Logs (SUPER_ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/governance-logs?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "governance-logs"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "description": "Fetch governance audit logs. Requires super admin authorization."
+        },
+        {
+          "name": "Activity Logs (SUPER_ADMIN)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwtToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/activity-logs?limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "activity-logs"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            }
+          },
+          "description": "Fetch system activity logs. Requires super admin authorization."
+        }
+      ],
+      "description": "Notification consumption plus governance/activity audit APIs for administrators."
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "jwtToken",
+      "value": ""
+    },
+    {
+      "key": "organizerToken",
+      "value": ""
+    },
+    {
+      "key": "companyToken",
+      "value": ""
+    },
+    {
+      "key": "judgeToken",
+      "value": ""
+    },
+    {
+      "key": "participantToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "hackathonId",
+      "value": "1"
+    },
+    {
+      "key": "teamId",
+      "value": "1"
+    },
+    {
+      "key": "projectId",
+      "value": "1"
+    },
+    {
+      "key": "competitionId",
+      "value": "1"
+    },
+    {
+      "key": "jobId",
+      "value": "1"
+    },
+    {
+      "key": "applicationId",
+      "value": "1"
+    },
+    {
+      "key": "notificationId",
+      "value": "1"
+    }
+  ]
+}

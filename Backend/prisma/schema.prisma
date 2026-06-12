@@ -1,0 +1,460 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PARTICIPANT
+  JUDGE
+  ORGANIZER
+  COMPANY
+  SUPER_ADMIN
+}
+
+enum HackathonStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+}
+
+enum CompetitionType {
+  HACKATHON
+  CODING_CHALLENGE
+  CASE_STUDY
+  QUIZ
+  HIRING_CHALLENGE
+}
+
+enum CompetitionStatus {
+  DRAFT
+  UPCOMING
+  ACTIVE
+  EVALUATION
+  COMPLETED
+  CANCELLED
+}
+
+enum VisibilityType {
+  PUBLIC
+  PRIVATE
+  INVITE_ONLY
+}
+
+enum TeamInviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum FeedbackVisibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum JobType {
+  INTERNSHIP
+  FULL_TIME
+  CONTRACT
+}
+
+enum ApplicationStatus {
+  APPLIED
+  REVIEWING
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+enum NotificationType {
+  SYSTEM
+  COMPETITION
+  EVALUATION
+  RESULT
+  HIRING
+  JOB
+}
+
+enum ActivityType {
+  USER
+  COMPETITION
+  TEAM
+  SUBMISSION
+  EVALUATION
+  HIRING
+  JOB
+  ADMIN
+  SECURITY
+}
+
+model User {
+  id                Int               @id @default(autoincrement())
+  name              String
+  email             String            @unique
+  password          String
+  role              UserRole
+  profilePhoto      String?
+  bio               String?
+  skills            String[]
+  resumeUrl         String?
+  githubUrl         String?
+  linkedinUrl       String?
+  isEmailVerified   Boolean           @default(false)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  organizedEvents   Hackathon[]       @relation("OrganizerHackathons")
+  organizedCompetitions Competition[] @relation("CompetitionOrganizer")
+  companyJobs       Job[]             @relation("CompanyJobs")
+  companyHiringInterests HiringInterest[] @relation("CompanyHiringInterest")
+  teamMemberships   TeamMember[]
+  judgeAssignments  JudgeAssignment[]
+  competitionJudgeAssignments CompetitionJudgeAssignment[]
+  competitionRegistrations CompetitionRegistration[]
+  givenScores       Score[]
+  ledTeams          Team[]            @relation("TeamLeader")
+  sentInvites       TeamInvite[]      @relation("InviteSender")
+  receivedInvites   TeamInvite[]      @relation("InviteReceiver")
+  refreshTokens     RefreshToken[]
+  notifications     Notification[]
+  applications      JobApplication[]
+  companyShortlists CompanyShortlist[] @relation("CompanyShortlistOwner")
+  shortlistedBy     CompanyShortlist[] @relation("ShortlistedCandidate")
+  activities        ActivityLog[]     @relation("ActivityActor")
+  governanceLogs    GovernanceLog[]   @relation("GovernanceActor")
+}
+
+model RefreshToken {
+  id         Int       @id @default(autoincrement())
+  token      String    @unique
+  userId     Int
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Competition {
+  id                    Int                  @id @default(autoincrement())
+  title                 String
+  description           String
+  bannerImage           String?
+  rules                 String?
+  faqs                  Json?
+  prizeDetails          Json?
+  organizerId           Int
+  type                  CompetitionType
+  status                CompetitionStatus    @default(DRAFT)
+  visibility            VisibilityType       @default(PUBLIC)
+  registrationStart     DateTime?
+  registrationEnd       DateTime?
+  submissionDeadline    DateTime?
+  evaluationStart       DateTime?
+  evaluationEnd         DateTime?
+  resultAnnouncement    DateTime?
+  maxTeamSize           Int?
+  eligibilityCriteria   String?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  organizer             User                 @relation("CompetitionOrganizer", fields: [organizerId], references: [id], onDelete: Restrict)
+  criteria              Criterion[]
+  registrations         CompetitionRegistration[]
+  judgeAssignments      CompetitionJudgeAssignment[]
+  jobs                  Job[]
+}
+
+model CompetitionRegistration {
+  id             Int          @id @default(autoincrement())
+  competitionId  Int
+  userId         Int
+  createdAt      DateTime     @default(now())
+  competition    Competition  @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([competitionId, userId])
+}
+
+model CompetitionJudgeAssignment {
+  id             Int          @id @default(autoincrement())
+  competitionId  Int
+  judgeId        Int
+  createdAt      DateTime     @default(now())
+  competition    Competition  @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  judge          User         @relation(fields: [judgeId], references: [id], onDelete: Cascade)
+
+  @@unique([competitionId, judgeId])
+}
+
+model Criterion {
+  id              Int          @id @default(autoincrement())
+  competitionId   Int
+  key             String
+  name            String
+  description     String?
+  weight          Float
+  maxScore        Int          @default(10)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  competition     Competition  @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  scoreCriteria   ScoreCriterion[]
+
+  @@unique([competitionId, key])
+}
+
+model Hackathon {
+  id                Int               @id @default(autoincrement())
+  title             String
+  description       String
+  rules             String?
+  organizerId       Int
+  status            HackathonStatus   @default(UPCOMING)
+  startDate         DateTime
+  endDate           DateTime
+  innovationWeight  Float             @default(0.35)
+  uiuxWeight        Float             @default(0.2)
+  impactWeight      Float             @default(0.25)
+  feasibilityWeight Float             @default(0.2)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  organizer         User              @relation("OrganizerHackathons", fields: [organizerId], references: [id], onDelete: Restrict)
+  teams             Team[]
+  judgeAssignments  JudgeAssignment[]
+}
+
+model Team {
+  id          Int          @id @default(autoincrement())
+  name        String
+  hackathonId Int
+  leaderId    Int?
+  inviteCode  String?      @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  hackathon   Hackathon    @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  leader      User?        @relation("TeamLeader", fields: [leaderId], references: [id], onDelete: SetNull)
+  members     TeamMember[]
+  invites     TeamInvite[]
+  project     Project?
+
+  @@unique([name, hackathonId])
+}
+
+model TeamInvite {
+  id          Int              @id @default(autoincrement())
+  teamId       Int
+  inviterId    Int
+  inviteeId    Int?
+  inviteeEmail String?
+  code         String           @unique
+  status       TeamInviteStatus @default(PENDING)
+  expiresAt    DateTime?
+  createdAt    DateTime         @default(now())
+  team         Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  inviter      User             @relation("InviteSender", fields: [inviterId], references: [id], onDelete: Cascade)
+  invitee      User?            @relation("InviteReceiver", fields: [inviteeId], references: [id], onDelete: SetNull)
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  teamId    Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+}
+
+model Project {
+  id          Int              @id @default(autoincrement())
+  teamId       Int               @unique
+  title        String
+  description  String
+  githubLink   String
+  demoLink     String
+  pptUrl       String?
+  videoDemoUrl String?
+  version      Int               @default(1)
+  submittedAt  DateTime          @default(now())
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  team         Team              @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  histories    ProjectHistory[]
+  scores       Score[]
+  finalScore   FinalScore?
+  hiringInterests HiringInterest[]
+  shortlists   CompanyShortlist[]
+}
+
+model ProjectHistory {
+  id           Int       @id @default(autoincrement())
+  projectId    Int
+  version      Int
+  title        String
+  description  String
+  githubLink   String
+  demoLink     String
+  pptUrl       String?
+  videoDemoUrl String?
+  createdAt    DateTime  @default(now())
+  project      Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model JudgeAssignment {
+  id          Int       @id @default(autoincrement())
+  judgeId      Int
+  hackathonId  Int
+  createdAt    DateTime  @default(now())
+  judge        User      @relation(fields: [judgeId], references: [id], onDelete: Cascade)
+  hackathon    Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+
+  @@unique([judgeId, hackathonId])
+}
+
+model Score {
+  id            Int      @id @default(autoincrement())
+  projectId     Int
+  judgeId       Int
+  innovation    Int
+  uiux          Int
+  impact        Int
+  feasibility   Int
+  comment       String
+  weightedScore Float
+  feedbackVisibility FeedbackVisibility @default(PRIVATE)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  judge         User     @relation(fields: [judgeId], references: [id], onDelete: Cascade)
+  criteria      ScoreCriterion[]
+  audits        ScoreAuditLog[]
+
+  @@unique([projectId, judgeId])
+}
+
+model ScoreCriterion {
+  id           Int       @id @default(autoincrement())
+  scoreId      Int
+  criterionId  Int
+  value        Float
+  note         String?
+  createdAt    DateTime  @default(now())
+  score        Score     @relation(fields: [scoreId], references: [id], onDelete: Cascade)
+  criterion    Criterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+
+  @@unique([scoreId, criterionId])
+}
+
+model ScoreAuditLog {
+  id            Int       @id @default(autoincrement())
+  scoreId       Int
+  previousValue Json?
+  nextValue     Json
+  reason        String?
+  changedById   Int?
+  changedAt     DateTime  @default(now())
+  score         Score     @relation(fields: [scoreId], references: [id], onDelete: Cascade)
+}
+
+model FinalScore {
+  id         Int      @id @default(autoincrement())
+  projectId  Int      @unique
+  totalScore Float
+  rank       Int?
+  explanation Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model HiringInterest {
+  id          Int      @id @default(autoincrement())
+  companyName String
+  companyId   Int?
+  projectId   Int
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  company     User?    @relation("CompanyHiringInterest", fields: [companyId], references: [id], onDelete: SetNull)
+}
+
+model CompanyShortlist {
+  id           Int       @id @default(autoincrement())
+  companyId    Int
+  candidateId  Int
+  projectId    Int?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  company      User      @relation("CompanyShortlistOwner", fields: [companyId], references: [id], onDelete: Cascade)
+  candidate    User      @relation("ShortlistedCandidate", fields: [candidateId], references: [id], onDelete: Cascade)
+  project      Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@unique([companyId, candidateId, projectId])
+}
+
+model Job {
+  id               Int          @id @default(autoincrement())
+  companyId        Int
+  competitionId    Int?
+  type             JobType
+  title            String
+  description      String
+  requirements     String
+  location         String?
+  salaryOrStipend  String?
+  isActive         Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  company          User         @relation("CompanyJobs", fields: [companyId], references: [id], onDelete: Cascade)
+  competition      Competition? @relation(fields: [competitionId], references: [id], onDelete: SetNull)
+  applications     JobApplication[]
+}
+
+model JobApplication {
+  id              Int               @id @default(autoincrement())
+  jobId           Int
+  userId          Int
+  resumeUrl       String?
+  coverLetter     String?
+  status          ApplicationStatus @default(APPLIED)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  job             Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, userId])
+}
+
+model Notification {
+  id          Int              @id @default(autoincrement())
+  userId      Int
+  type        NotificationType @default(SYSTEM)
+  title       String
+  message     String
+  payload     Json?
+  isRead      Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id          Int          @id @default(autoincrement())
+  actorId     Int?
+  type        ActivityType
+  action      String
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+  actor       User?        @relation("ActivityActor", fields: [actorId], references: [id], onDelete: SetNull)
+}
+
+model GovernanceLog {
+  id          Int          @id @default(autoincrement())
+  actorId     Int?
+  action      String
+  targetType  String
+  targetId    String?
+  details     Json?
+  createdAt   DateTime     @default(now())
+  actor       User?        @relation("GovernanceActor", fields: [actorId], references: [id], onDelete: SetNull)
+}
